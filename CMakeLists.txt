@@ -48,10 +48,14 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(webp)
 
-# --- Hauptprogramm ---
+# --- Main ---
 add_executable(qrgen src/main.cpp)
 
-# Dem Compiler mitteilen, wo unsere Header-Dateien liegen
-target_include_directories(qrgen PRIVATE include)
+# Tell the compiler where our header files are
+target_include_directories(qrgen PRIVATE 
+    include
+    ${qrencode_SOURCE_DIR}
+    ${webp_SOURCE_DIR}
+)
 
 target_link_libraries(qrgen PRIVATE qrencode webp)
