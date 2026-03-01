@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.23)
 
 
-# sudo apt install libqrencode-dev ibwebp-dev
+# sudo apt install libqrencode-dev libwebp-dev
 
 # cmake -S . -B build
 # cmake --build build -j$(nproc)

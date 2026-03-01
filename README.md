@@ -1,8 +1,8 @@
 <div id="top" align="center">
 
-# QR Code Generator (CLI & Header-only library)
+<h1>QR Code Generator</h1>
 
-<p>QRGenerator: C++23 QR Code Generator (SVG & WebP)</p>
+<p>QRGenerator: C++23 QR Code Generator (SVG & WebP - CLI & Header-only library)</p>
 
 [Report Issue](https://github.com/Zheng-Bote/qr_generator/issues) · [Request Feature](https://github.com/Zheng-Bote/qr_generator/pulls)
 
@@ -131,8 +131,6 @@ int main() {
 ## Architecture
 
 The project follows a straightforward and maintainable architecture, designed to separate the encoding logic from the file I/O operations.
-
-- Detailed diagrams and architectural notes are stored in the `docs/architecture/` directory.
 
 ### High-Level Flow Diagram
 
