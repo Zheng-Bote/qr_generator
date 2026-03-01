@@ -15,8 +15,22 @@
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
 **Table of Contents**
+
+  - [Description](#description)
+  - [✨ Features](#-features)
+  - [📂 Project Structure](#-project-structure)
+  - [🛠️ Prerequisites](#-prerequisites)
+  - [🚀 Building the Project](#-building-the-project)
+  - [💻 CLI Usage](#-cli-usage)
+    - [Syntax:](#syntax)
+      - [Examples](#examples)
+  - [🧩 Using the Header-only Library in Your Code](#-using-the-header-only-library-in-your-code)
+  - [Architecture](#architecture)
+    - [High-Level Flow Diagram](#high-level-flow-diagram)
+- [📄 License](#-license)
+  - [🤝 Authors](#-authors)
+    - [Code Contributors](#code-contributors)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
