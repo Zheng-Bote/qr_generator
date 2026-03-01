@@ -1,0 +1,29 @@
+cmake_minimum_required(VERSION 3.23)
+
+
+# sudo apt install libqrencode-dev ibwebp-dev
+
+# cmake -S . -B build
+# cmake --build build -j$(nproc)
+
+# build/qr_svg "https://www.robert.hase-zheng.net" > test.svg
+# build/qr_webp "mailto:info@example.com" mymail.webp 10
+
+project(qr_svg LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(QRENCODE REQUIRED libqrencode)
+pkg_check_modules(WEBP REQUIRED libwebp)
+
+include_directories(${QRENCODE_INCLUDE_DIRS} ${WEBP_INCLUDE_DIRS})
+link_directories(${QRENCODE_LIBRARY_DIRS} ${WEBP_LIBRARY_DIRS})
+add_executable(${PROJECT_NAME} src/qr_svg.cpp)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${QRENCODE_LIBRARIES})
+target_compile_options(${PROJECT_NAME} PRIVATE -O2)
+
+add_executable(qr_webp src/qr_webp.cpp)
+target_link_libraries(qr_webp PRIVATE ${QRENCODE_LIBRARIES} ${WEBP_LIBRARIES})
+target_compile_options(qr_webp PRIVATE -O2)

@@ -1,0 +1,178 @@
+<div id="top" align="center">
+
+# QR Code Generator (CLI & Header-only library)
+
+<p>QRGenerator: C++23 QR Code Generator (SVG & WebP)</p>
+
+[Report Issue](https://github.com/Zheng-Bote/qr_generator/issues) · [Request Feature](https://github.com/Zheng-Bote/qr_generator/pulls)
+
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/Zheng-Bote/qr_generator?logo=GitHub)](https://github.com/Zheng-Bote/qr_generator/releases)
+
+</div>
+
+---
+
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+**Table of Contents**
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+---
+
+## Description
+
+A lightweight, modern C++23 **command-line tool** and **header-only library** for generating QR codes. It supports exporting to both vector (SVG) and lossless raster (WebP) formats.
+
+The project requires zero manual dependency installation: it uses CMake's FetchContent to automatically download and statically link libqrencode and libwebp during the build process.
+
+## ✨ Features
+
+- Dual Format Output: Generate fully scalable .svg files or highly compressed, lossless .webp images based simply on the output file extension.
+- Custom Colors: Support for custom hex-code foreground and background colors (including alpha/opacity).
+- Header-only Library: The core logic is encapsulated in a single include/qr_generator.hpp file, making it trivial to drop into your own C++ projects.
+- Modern C++23: Utilizes modern C++ features like std::format, std::filesystem, and std::ranges.
+
+## 📂 Project Structure
+
+```
+.
+├── CMakeLists.txt         # Build script (handles fetching dependencies)
+├── include/
+│   └── qr_generator.hpp   # Core header-only library
+└── src/
+    └── main.cpp           # CLI wrapper
+```
+
+## 🛠️ Prerequisites
+
+- A C++23 compatible compiler (GCC 13+, Clang 16+, or MSVC v143+)
+- CMake 3.24 or higher
+
+## 🚀 Building the Project
+
+You don't need to install libqrencode or libwebp on your system. CMake will download them automatically.
+
+```bash
+# 1. Clone the repository (or navigate to the folder)
+# git clone https://github.com/ZHeng-Bote/qr_generator.git
+cd qrgen
+
+# 2. Create a build directory
+mkdir build && cd build
+
+# 3. Configure and build
+cmake ..
+cmake --build .
+This will produce the qrgen executable in your build directory.
+```
+
+## 💻 CLI Usage
+
+The command-line tool automatically determines the output format based on your file extension (.svg or .webp).
+
+### Syntax:
+
+```bash
+./qrgen "<text-or-url>" <output-file.[svg|webp]> [scale] [fg_hex] [bg_hex]
+```
+
+#### Examples
+
+1. Basic SVG (Default black & white, scale 8):
+
+```bash
+./qrgen "https://github.com" github.svg
+```
+
+2. Larger WebP Image (Scale 15):
+
+```bash
+./qrgen "mailto:hello@example.com" contact.webp 15
+```
+
+3. Custom Colors (Red foreground FF0000, dark gray background 222222):
+
+```bash
+./qrgen "WIFI:S:MyNetwork;T:WPA;P:MyPassword;;" wifi.svg 10 FF0000 222222
+```
+
+## 🧩 Using the Header-only Library in Your Code
+
+If you want to use the QR generator in your own application, just include the qr_generator.hpp file.
+
+> [!NOTE]
+> Because the underlying C libraries (libqrencode and libwebp) are not header-only, you must still link against them in your own CMakeLists.txt.
+
+```cpp
+#include "qr_generator.hpp"
+#include <iostream>
+
+int main() {
+    std::string text = "https://example.com";
+    std::filesystem::path out = "my_code.webp";
+
+    // Scale 10, Dark Blue foreground, Light Yellow background
+    qr::Color fg = {0, 0, 139, 255};
+    qr::Color bg = {255, 255, 224, 255};
+
+    if (qr::generate(text, out, 10, fg, bg)) {
+        std::cout << "Successfully generated " << out << "!\n";
+    } else {
+        std::cerr << "Failed to generate QR code.\n";
+    }
+
+    return 0;
+}
+```
+
+## Architecture
+
+The project follows a straightforward and maintainable architecture, designed to separate the encoding logic from the file I/O operations.
+
+- Detailed diagrams and architectural notes are stored in the `docs/architecture/` directory.
+
+### High-Level Flow Diagram
+
+```mermaid
+graph TD
+    User([User CLI]) -->|Executes with args| Core[qrgen Application]
+    Core -->|1. Generate Matrix| QR[libqrencode]
+    QR -.->|Returns Raw Matrix| Core
+    Core -->|2. Check Extension| Router{File Extension?}
+
+    Router -->|.svg| SVGGen[SVG Generator]
+    Router -->|.webp| WebPGen[WebP Generator]
+
+    WebPGen -->|3. Compress| LibWebP[libwebp]
+    LibWebP -.->|Returns WebP Bytes| WebPGen
+
+    SVGGen -->|4. Writes| FileSVG[(SVG File)]
+    WebPGen -->|4. Writes| FileWebP[(WebP File)]
+
+    style User fill:#f9f,stroke:#333,stroke-width:2px
+```
+
+---
+
+# 📄 License
+
+This project is licensed under the **MIT License**.
+
+Copyright (c) 2026 ZHENG Robert
+
+## 🤝 Authors
+
+- [![Zheng Robert - Core Development](https://img.shields.io/badge/Github-Zheng_Robert-black?logo=github)](https://www.github.com/Zheng-Bote)
+
+### Code Contributors
+
+![Contributors](https://img.shields.io/github/contributors/Zheng-Bote/qr_generator?color=dark-green)
+
+[![Zheng Robert](https://img.shields.io/badge/Github-Zheng_Robert-black?logo=github)](https://www.github.com/Zheng-Bote)
+
+---
+
+Made with ❤️ and a lot of coffee. :vulcan_salute:
