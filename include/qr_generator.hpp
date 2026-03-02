@@ -7,14 +7,15 @@
  *
  * @file qr_generator.hpp
  * @brief Header-only library for generating SVG and WebP QR codes.
- * @version 0.1.0
- * @date 2026-03-01
+ * @version 0.3.0
+ * @date 2026-03-02
  *
  * @author ZHENG Robert (robert@hase-zheng.net)
  * @copyright Copyright (c) 2026 ZHENG Robert
  *
  * @license MIT License
  */
+
 
 #pragma once
 
@@ -30,43 +31,25 @@
 #include <print>
 #include <string>
 #include <vector>
+#include <optional> // Hinzugefügt für die Rückgabe des SVG-Strings
 
 namespace qr {
 
-/**
- * @brief Represents an RGBA color.
- */
 struct Color {
-  uint8_t r{0};   ///< Red component
-  uint8_t g{0};   ///< Green component
-  uint8_t b{0};   ///< Blue component
-  uint8_t a{255}; ///< Alpha component
+  uint8_t r{0};   
+  uint8_t g{0};   
+  uint8_t b{0};   
+  uint8_t a{255}; 
 
-  /**
-   * @brief Helper for SVG: Returns the hex code (e.g., #FF0000).
-   *
-   * @return std::string Hexadecimal color representation.
-   */
   std::string to_hex() const {
     return std::format("#{:02x}{:02x}{:02x}", r, g, b);
   }
 
-  /**
-   * @brief Helper for SVG: Returns the opacity (0.0 to 1.0).
-   *
-   * @return double Opacity ranging from 0.0 to 1.0.
-   */
   double opacity() const { return a / 255.0; }
 };
 
 namespace detail {
 
-/**
- * @brief Converts a string to lowercase.
- *
- * @param s String to evaluate
- * @return std::string Lowercase copy of the string
- */
 inline std::string to_lowercase(std::string s) {
   std::ranges::transform(s, s.begin(),
                          [](unsigned char c) { return std::tolower(c); });
@@ -74,41 +57,24 @@ inline std::string to_lowercase(std::string s) {
 }
 
 /**
- * @brief Generates and saves a QR code as an SVG file.
- *
- * @param q Pointer to the generated QRcode object.
- * @param out_path The filesystem path where the SVG should be saved.
- * @param scale The scaling factor for the QR code.
- * @param fg The foreground color of the QR code.
- * @param bg The background color of the QR code.
- * @return true If the file was successfully saved.
- * @return false If an error occurred during saving.
+ * @brief Erzeugt den reinen SVG-Code als String.
  */
-inline bool save_as_svg(QRcode *q, const std::filesystem::path &out_path,
-                        int scale, Color fg, Color bg) {
+inline std::string to_svg_string(QRcode *q, int scale, Color fg, Color bg) {
   const int module_count = q->width;
   const int quiet = 4;
   const int size = (module_count + 2 * quiet) * scale;
 
-  std::ofstream out(out_path);
-  if (!out) {
-    std::println(stderr, "Error: Cannot open output file: {}",
-                 out_path.string());
-    return false;
-  }
-
-  out << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-  out << std::format("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{}\" "
+  std::string out;
+  out += "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+  out += std::format("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"{}\" "
                      "height=\"{}\" viewBox=\"0 0 {} {}\">\n",
                      size, size, size, size);
 
-  // Draw background
-  out << std::format("<rect width=\"100%\" height=\"100%\" fill=\"{}\" "
+  out += std::format("<rect width=\"100%\" height=\"100%\" fill=\"{}\" "
                      "fill-opacity=\"{:.2f}\"/>\n",
                      bg.to_hex(), bg.opacity());
 
-  // Open foreground group
-  out << std::format("<g fill=\"{}\" fill-opacity=\"{:.2f}\">\n", fg.to_hex(),
+  out += std::format("<g fill=\"{}\" fill-opacity=\"{:.2f}\">\n", fg.to_hex(),
                      fg.opacity());
 
   const unsigned char *data = q->data;
@@ -119,28 +85,30 @@ inline bool save_as_svg(QRcode *q, const std::filesystem::path &out_path,
       if (dark) {
         int rx = (x + quiet) * scale;
         int ry = (y + quiet) * scale;
-        out << std::format(
+        out += std::format(
             "<rect x=\"{}\" y=\"{}\" width=\"{}\" height=\"{}\"/>\n", rx, ry,
             scale, scale);
       }
     }
   }
 
-  out << "</g>\n</svg>\n";
+  out += "</g>\n</svg>\n";
+  return out;
+}
+
+inline bool save_as_svg(QRcode *q, const std::filesystem::path &out_path,
+                        int scale, Color fg, Color bg) {
+  std::string svg_data = to_svg_string(q, scale, fg, bg);
+  std::ofstream out(out_path);
+  if (!out) {
+    std::println(stderr, "Error: Cannot open output file: {}",
+                 out_path.string());
+    return false;
+  }
+  out << svg_data;
   return true;
 }
 
-/**
- * @brief Generates and saves a QR code as a WebP file.
- *
- * @param q Pointer to the generated QRcode object.
- * @param out_path The filesystem path where the WebP should be saved.
- * @param scale The scaling factor for the QR code.
- * @param fg The foreground color of the QR code.
- * @param bg The background color of the QR code.
- * @return true If the file was successfully saved.
- * @return false If an error occurred during saving or encoding.
- */
 inline bool save_as_webp(QRcode *q, const std::filesystem::path &out_path,
                          int scale, Color fg, Color bg) {
   const int modules = q->width;
@@ -148,7 +116,6 @@ inline bool save_as_webp(QRcode *q, const std::filesystem::path &out_path,
   const int img_size = (modules + 2 * quiet) * scale;
   const int stride = img_size * 4;
 
-  // Fill buffer with background color
   std::vector<uint8_t> rgba(static_cast<size_t>(img_size) * img_size * 4);
   for (size_t i = 0; i < rgba.size(); i += 4) {
     rgba[i] = bg.r;
@@ -208,21 +175,29 @@ inline bool save_as_webp(QRcode *q, const std::filesystem::path &out_path,
 } // namespace detail
 
 /**
- * @brief Main wrapper function to generate and save QR code with optional color
- * parameters.
- *
- * @param text The data to be encoded as a QR code.
- * @param out_path Output filesystem path. Must end with .svg or .webp.
- * @param scale Scaling factor. Default is 8.
- * @param fg Foreground color. Default is black.
- * @param bg Background color. Default is white.
- * @param ec_level Error correction level. Default is medium (QR_ECLEVEL_M).
- * @return true if successful, false otherwise.
+ * @brief Generates a QR Code and returns it directly as an SVG string.
  */
+inline std::optional<std::string> generate_svg_string(
+    const std::string &text, int scale = 8,
+    Color fg = {0, 0, 0, 255}, Color bg = {255, 255, 255, 255},
+    QRecLevel ec_level = QR_ECLEVEL_M) {
+    
+  QRcode *q = QRcode_encodeString(text.c_str(), 0, ec_level, QR_MODE_8, 1);
+  if (!q) {
+    std::println(stderr, "Error: QR Code Encoding failed.");
+    return std::nullopt;
+  }
+
+  std::string svg_out = detail::to_svg_string(q, scale, fg, bg);
+  QRcode_free(q);
+  
+  return svg_out;
+}
+
 inline bool generate(const std::string &text,
                      const std::filesystem::path &out_path, int scale = 8,
-                     Color fg = {0, 0, 0, 255},       // Default: Black
-                     Color bg = {255, 255, 255, 255}, // Default: White
+                     Color fg = {0, 0, 0, 255},       
+                     Color bg = {255, 255, 255, 255}, 
                      QRecLevel ec_level = QR_ECLEVEL_M) {
   std::string ext = detail::to_lowercase(out_path.extension().string());
   if (ext != ".svg" && ext != ".webp") {

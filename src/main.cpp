@@ -7,8 +7,8 @@
  *
  * @file main.cpp
  * @brief Main entry point for the QR Code Generator
- * @version 0.1.0
- * @date 2026-03-01
+ * @version 0.2.0
+ * @date 2026-03-02
  *
  * @author ZHENG Robert (robert@hase-zheng.net)
  * @copyright Copyright (c) 2026 ZHENG Robert
@@ -17,7 +17,9 @@
  */
 
 #include "qr_generator.hpp"
+
 #include <charconv>
+#include <cstdio> // Für stderr
 #include <filesystem>
 #include <iostream>
 #include <print>
@@ -54,16 +56,19 @@ qr::Color parse_hex(std::string_view hex, uint8_t alpha = 255) {
 int main(int argc, char **argv) {
   if (argc < 3) {
     std::println(
-        "Usage: {} \"<text>\" <output.[svg|webp]> [scale] [fg_hex] [bg_hex]",
+        "Usage: {} \"<text>\" <output.[svg|webp] | -> [scale] [fg_hex] [bg_hex]",
         argv[0]);
     std::println(
-        "Example:   {} \"https://example.com\" qr.webp 10 FF0000 FFFFFF",
+        "Example 1: {} \"https://example.com\" qr.webp 10 FF0000 FFFFFF",
+        argv[0]);
+    std::println(
+        "Example 2: {} \"Console Output\" - 8", 
         argv[0]);
     return 1;
   }
 
   std::string text = argv[1];
-  std::filesystem::path out_path = argv[2];
+  std::string out_path_str = argv[2];
   int scale = (argc >= 4) ? std::max(1, std::atoi(argv[3])) : 8;
 
   // Parse colors (or use defaults)
@@ -71,6 +76,20 @@ int main(int argc, char **argv) {
   qr::Color bg =
       (argc >= 6) ? parse_hex(argv[5]) : qr::Color{255, 255, 255, 255};
 
+  // --- NEU: Wenn als Dateiname '-' übergeben wird, direkt als String ausgeben ---
+  if (out_path_str == "-") {
+    auto svg_opt = qr::generate_svg_string(text, scale, fg, bg);
+    if (svg_opt.has_value()) {
+      std::println("{}", svg_opt.value());
+      return 0;
+    } else {
+      std::println(stderr, "Error: Failed to generate SVG string.");
+      return 2;
+    }
+  }
+
+  // --- WIE BISHER: In Datei speichern ---
+  std::filesystem::path out_path = out_path_str;
   if (qr::generate(text, out_path, scale, fg, bg)) {
     std::println("Successfully saved to: {}", out_path.string());
     std::println("Scale: {} | FG: {} | BG: {}", scale, fg.to_hex(),

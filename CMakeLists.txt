@@ -5,12 +5,14 @@ cmake_minimum_required(VERSION 3.24)
 
 # ./qrgen "Hello World" bunt.svg 10 FF5500 222222
 
+
 project(QRGenerator
-VERSION 0.1.0
+VERSION 0.2.0
 DESCRIPTION "QR Code Generator (CLI & Header-only library)"
-HOMEPAGE_URL "https://github.com/ZHeng-Bote/qr_generator"
+HOMEPAGE_URL "https://github.com/Zheng-Bote/qr_generator"
 LANGUAGES C CXX)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -48,14 +50,35 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(webp)
 
-# --- Main ---
-add_executable(qrgen src/main.cpp)
 
-# Tell the compiler where our header files are
-target_include_directories(qrgen PRIVATE 
-    include
-    ${qrencode_SOURCE_DIR}
-    ${webp_SOURCE_DIR}
+# ==============================================================================
+# Bibliothek (Library Target) - perfect for external consumers
+# ==============================================================================
+add_library(qr_generator INTERFACE)
+add_library(qr_generator::qr_generator ALIAS qr_generator)
+
+# Damit fremde Projekte den "include"-Ordner und die Header von qrencode/webp finden
+target_include_directories(qr_generator INTERFACE 
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<BUILD_INTERFACE:${qrencode_SOURCE_DIR}>
+    $<BUILD_INTERFACE:${webp_SOURCE_DIR}>
 )
 
-target_link_libraries(qrgen PRIVATE qrencode webp)
+# Abhängigkeiten weitervererben
+target_link_libraries(qr_generator INTERFACE qrencode webp)
+
+
+# ==============================================================================
+# Executable (CLI Tool) - built only if this project is the top-level project
+# ==============================================================================
+if(PROJECT_IS_TOP_LEVEL)
+    add_executable(qrgen src/main.cpp)
+    
+    # Links now cleanly against the own Interface-Target
+    target_link_libraries(qrgen PRIVATE qr_generator)
+endif()
+
+
+# libs.txt Generate (timing-safe via GENERATE)
+file(GENERATE OUTPUT "${CMAKE_BINARY_DIR}/libs.txt" 
+     CONTENT "$<TARGET_PROPERTY:qr_generator,LINK_LIBRARIES>")
