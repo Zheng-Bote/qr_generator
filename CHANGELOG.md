@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-03-02
+
+### Added
+
+- **SVG to Standard Output**: Added support for outputting SVG directly to standard output (`std::cout`).
+
+### Changed
+
+- **README.md**: Updated project documentation with new features.
+
 ## [0.1.0] - 2026-03-01
 
 ### Added
@@ -17,5 +27,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Self-Contained Build**: Implemented CMake `FetchContent` to automatically download and statically link `libqrencode` and `libwebp`, removing the need for pre-installed system dependencies.
 - **Automated CI/CD**: Added comprehensive GitHub Actions workflows for CodeQL security scanning, Cppcheck static analysis, Clang-Tidy linting, SBOM generation (SPDX & CycloneDX), and automated CVE vulnerability checks.
 - **Modern C++23 Idioms**: Fully utilizes C++23 features such as `std::print`, `std::ranges`, and `std::format`.
-- **Documentation**: Provided complete Doxygen-style documentation and English translations for all source files, compliant with `GEMINI.md` standards.
+- **Documentation**: Provided complete Doxygen-style documentation and English translations for all source files, compliant with standards.
 - **README.md**: Added detailed project documentation including setup instructions, CLI usage examples, and a Mermaid architecture diagram.
