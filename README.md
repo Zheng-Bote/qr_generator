@@ -23,6 +23,7 @@
   - [📂 Project Structure](#-project-structure)
   - [🛠️ Prerequisites](#-prerequisites)
   - [🚀 Building the Project](#-building-the-project)
+    - [Generating a macOS Installer (.pkg)](#generating-a-macos-installer-pkg)
   - [💻 CLI Usage](#-cli-usage)
     - [Syntax:](#syntax)
       - [Examples](#examples)
