@@ -7,7 +7,7 @@
 [Report Issue](https://github.com/Zheng-Bote/qr_generator/issues) · [Request Feature](https://github.com/Zheng-Bote/qr_generator/pulls)
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
-[![C++23](https://img.shields.io/badge/C%2B%2B-23-blue.svg)]()
+![Platform](https://img.shields.io/badge/platform-Linux%20%7C%20macOS-lightgrey.svg)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/Zheng-Bote/qr_generator?logo=GitHub)](https://github.com/Zheng-Bote/qr_generator/releases)
 
 </div>
@@ -68,6 +68,9 @@ The project requires zero manual dependency installation: it uses CMake's FetchC
 
 ## 🛠️ Prerequisites
 
+[![C++23](https://img.shields.io/badge/C%2B%2B-23-blue.svg)]()
+[![CMake](https://img.shields.io/badge/CMake-3.23+-blue.svg)]()
+
 - A C++23 compatible compiler (GCC 13+, Clang 16+, or MSVC v143+)
 - CMake 3.24 or higher
 
@@ -90,6 +93,16 @@ cmake --build .
 
 This will produce the qrgen executable in your build directory.
 
+### Generating a macOS Installer (.pkg)
+
+To create a native macOS `.pkg` installer, simply run `cpack` after building:
+
+```bash
+cd build
+cpack -G productbuild
+```
+
+This will generate a file like `qrgen-0.2.0-Darwin.pkg` which can be installed via double-click or the `installer` command line utility.
 
 ## 💻 CLI Usage
 

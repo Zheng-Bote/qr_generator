@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **macOS Installer**: Added CPack support for generating macOS `.pkg` installers.
 - **SVG to Standard Output**: Added support for outputting SVG directly to standard output (`std::cout`).
 
 ### Changed

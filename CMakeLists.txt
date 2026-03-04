@@ -25,7 +25,7 @@ set(PROG_AUTHOR "ZHENG Bote")
 set(PROG_ORGANIZATION_NAME "ZHENG Robert")
 set(PROG_ORGANIZATION_DOMAIN "net.hase-zheng")
 # create rz_config.hpp
-add_subdirectory(configure)
+# add_subdirectory(configure)
 
 include(FetchContent)
 
@@ -92,3 +92,27 @@ endif()
 # libs.txt Generate (timing-safe via GENERATE)
 file(GENERATE OUTPUT "${CMAKE_BINARY_DIR}/libs.txt" 
      CONTENT "$<TARGET_PROPERTY:qr_generator,LINK_LIBRARIES>")
+
+# ==============================================================================
+# Install & Packaging (macOS .pkg)
+# ==============================================================================
+if(PROJECT_IS_TOP_LEVEL)
+    install(TARGETS qrgen
+        DESTINATION bin
+        COMPONENT Application
+    )
+
+    set(CPACK_GENERATOR "productbuild")
+    set(CPACK_PACKAGE_NAME "qrgen")
+    set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
+    set(CPACK_PACKAGE_VENDOR "${PROG_ORGANIZATION_NAME}")
+    set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "${PROJECT_DESCRIPTION}")
+    set(CPACK_PACKAGING_INSTALL_PREFIX "/usr/local")
+    
+    # Required for macOS installer to not have disabled Continue button
+    set(CPACK_COMPONENTS_ALL Application)
+    set(CPACK_COMPONENT_APPLICATION_DISPLAY_NAME "QR Generator Application")
+    set(CPACK_COMPONENT_APPLICATION_DESCRIPTION "The CLI tool qrgen")
+    
+    include(CPack)
+endif()
