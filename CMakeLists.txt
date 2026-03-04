@@ -17,6 +17,16 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# --- Configure (für rz_config.hpp) ---
+set(EXECUTABLE_NAME "${PROJECT_NAME}")
+set(PROG_LONGNAME "Native C++ Dependency Scanner & SBOM Generator")
+set(PROG_CREATED "2026")
+set(PROG_AUTHOR "ZHENG Bote")
+set(PROG_ORGANIZATION_NAME "ZHENG Robert")
+set(PROG_ORGANIZATION_DOMAIN "net.hase-zheng")
+# create rz_config.hpp
+add_subdirectory(configure)
+
 include(FetchContent)
 
 # --- libqrencode ---

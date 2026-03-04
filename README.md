@@ -7,6 +7,7 @@
 [Report Issue](https://github.com/Zheng-Bote/qr_generator/issues) · [Request Feature](https://github.com/Zheng-Bote/qr_generator/pulls)
 
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+[![C++23](https://img.shields.io/badge/C%2B%2B-23-blue.svg)]()
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/Zheng-Bote/qr_generator?logo=GitHub)](https://github.com/Zheng-Bote/qr_generator/releases)
 
 </div>
